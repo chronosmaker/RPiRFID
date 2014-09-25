@@ -174,7 +174,7 @@ void WriteRawRC(unsigned char Address, unsigned char value)
 /////////////////////////////////////////////////////////////////////
 char PcdReset(void)
 {
-	pinMode (RST, OUTPUT);
+    pinMode (RST, OUTPUT);
     digitalWrite(RST, 1);
     delay(1);
     digitalWrite(RST, 0);
@@ -317,20 +317,20 @@ char PcdComMF522(unsigned char Command,
     
     for (i=0; i<InLenByte; i++)
     {
-		WriteRawRC(FIFODataReg, pInData[i]);
-	}
+        WriteRawRC(FIFODataReg, pInData[i]);
+    }
     WriteRawRC(CommandReg, Command);
    
     if (Command == PCD_TRANSCEIVE)
     {
-		SetBitMask(BitFramingReg,0x80);
-	}
+        SetBitMask(BitFramingReg,0x80);
+    }
     
     i = 2000;    //根据时钟频率调整，操作M1卡最大等待时间25ms
     do 
     {
-		n = ReadRawRC(ComIrqReg);
-		i--;
+        n = ReadRawRC(ComIrqReg);
+        i--;
     }
     while ((i!=0) && !(n&0x01) && !(n&waitFor));
     ClearBitMask(BitFramingReg,0x80);
@@ -387,7 +387,7 @@ char PcdComMF522(unsigned char Command,
 /////////////////////////////////////////////////////////////////////  
 char PcdAnticoll(unsigned char *pSnr)
 {
-	char status;
+    char status;
     unsigned char i,snr_check=0;
     unsigned int  unLen;
     unsigned char ucComMF522Buf[MAXRLEN]; 
@@ -447,12 +447,12 @@ char PcdSelect(unsigned char *pSnr)
     
     if ((status == MI_OK) && (unLen == 0x18))
     {
-		status = MI_OK;
-	}
+        status = MI_OK;
+    }
     else
     {
-		status = MI_ERR;
-	}
+        status = MI_ERR;
+    }
 
     return status;
 }
@@ -477,18 +477,18 @@ char PcdAuthState(unsigned char auth_mode,unsigned char addr,unsigned char *pKey
     ucComMF522Buf[1] = addr;
     for (i=0; i<6; i++)
     {
-		ucComMF522Buf[i+2] = *(pKey+i);
-	}
+        ucComMF522Buf[i+2] = *(pKey+i);
+    }
     for (i=0; i<6; i++)
     {
-		ucComMF522Buf[i+8] = *(pSnr+i);
-	}
+        ucComMF522Buf[i+8] = *(pSnr+i);
+    }
     
     status = PcdComMF522(PCD_AUTHENT,ucComMF522Buf,12,ucComMF522Buf,&unLen);
     if ((status != MI_OK) || (!(ReadRawRC(Status2Reg) & 0x08)))
     {
-		status = MI_ERR;
-	}
+        status = MI_ERR;
+    }
     return status;
 }
 
@@ -512,22 +512,22 @@ char PcdWrite(unsigned char addr,unsigned char *pData)
 
     if ((status != MI_OK) || (unLen != 4) || ((ucComMF522Buf[0] & 0x0F) != 0x0A))
     {
-		status = MI_ERR;
-	}
+        status = MI_ERR;
+    }
         
     if (status == MI_OK)
     {
         for (i=0; i<16; i++)
         {
-			ucComMF522Buf[i] = *(pData+i);
-		}
+            ucComMF522Buf[i] = *(pData+i);
+        }
         CalulateCRC(ucComMF522Buf,16,&ucComMF522Buf[16]);
 
         status = PcdComMF522(PCD_TRANSCEIVE,ucComMF522Buf,18,ucComMF522Buf,&unLen);
         if ((status != MI_OK) || (unLen != 4) || ((ucComMF522Buf[0] & 0x0F) != 0x0A))
         {
-			status = MI_ERR;
-		}
+            status = MI_ERR;
+        }
     }
     return status;
 }
@@ -551,15 +551,15 @@ char PcdRead(unsigned char addr,unsigned char *pData)
     status = PcdComMF522(PCD_TRANSCEIVE,ucComMF522Buf,4,ucComMF522Buf,&unLen);
     if ((status == MI_OK) && (unLen == 0x90))
     {
-		for (i=0; i<16; i++)
+        for (i=0; i<16; i++)
         {
-			*(pData+i) = ucComMF522Buf[i];
-		}
+            *(pData+i) = ucComMF522Buf[i];
+        }
     }
     else
     {
-		status = MI_ERR;
-	}
+        status = MI_ERR;
+    }
     return status;
 }
 
@@ -583,8 +583,8 @@ char PcdBakValue(unsigned char sourceaddr, unsigned char goaladdr)
 
     if ((status != MI_OK) || (unLen != 4) || ((ucComMF522Buf[0] & 0x0F) != 0x0A))
     {
-		status = MI_ERR;
-	}
+        status = MI_ERR;
+    }
     
     if (status == MI_OK)
     {
@@ -603,8 +603,8 @@ char PcdBakValue(unsigned char sourceaddr, unsigned char goaladdr)
     
     if (status != MI_OK)
     {
-		return MI_ERR;
-	}
+        return MI_ERR;
+    }
     
     ucComMF522Buf[0] = PICC_TRANSFER;
     ucComMF522Buf[1] = goaladdr;
@@ -615,8 +615,8 @@ char PcdBakValue(unsigned char sourceaddr, unsigned char goaladdr)
 
     if ((status != MI_OK) || (unLen != 4) || ((ucComMF522Buf[0] & 0x0F) != 0x0A))
     {
-		status = MI_ERR;
-	}
+        status = MI_ERR;
+    }
 
     return status;
 }
@@ -651,8 +651,8 @@ void CalulateCRC(unsigned char *pIndata,unsigned char len,unsigned char *pOutDat
     SetBitMask(FIFOLevelReg,0x80);
     for (i=0; i<len; i++)
     {
-		WriteRawRC(FIFODataReg, *(pIndata+i));
-	}
+        WriteRawRC(FIFODataReg, *(pIndata+i));
+    }
     WriteRawRC(CommandReg, PCD_CALCCRC);
     i = 0xFF;
     do 
@@ -688,22 +688,22 @@ char PcdValue(unsigned char dd_mode,unsigned char addr,unsigned char *pValue)
 
     if ((status != MI_OK) || (unLen != 4) || ((ucComMF522Buf[0] & 0x0F) != 0x0A))
     {
-		status = MI_ERR;
-	}
+        status = MI_ERR;
+    }
         
     if (status == MI_OK)
     {
         for (i=0; i<16; i++)
         {
-			ucComMF522Buf[i] = *(pValue+i);
-		}
+            ucComMF522Buf[i] = *(pValue+i);
+        }
         CalulateCRC(ucComMF522Buf,4,&ucComMF522Buf[4]);
         unLen = 0;
         status = PcdComMF522(PCD_TRANSCEIVE,ucComMF522Buf,6,ucComMF522Buf,&unLen);
         if (status != MI_ERR)
         {
-			status = MI_OK;
-		}
+            status = MI_OK;
+        }
     }
     
     if (status == MI_OK)
@@ -716,8 +716,8 @@ char PcdValue(unsigned char dd_mode,unsigned char addr,unsigned char *pValue)
 
         if ((status != MI_OK) || (unLen != 4) || ((ucComMF522Buf[0] & 0x0F) != 0x0A))
         {
-			status = MI_ERR;
-		}
+            status = MI_ERR;
+        }
     }
     return status;
 }
