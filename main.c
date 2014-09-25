@@ -18,9 +18,9 @@ int main(void)
 	unsigned char status, i, j;
 
 	delay(500);
-	PcdReset();			//RC522复位
+	PcdReset();		//RC522复位
 	PcdAntennaOff();	//关闭天线
-	delay(10);			//每次启动或关闭天线之间应至少有1ms的间隔
+	delay(10);		//每次启动或关闭天线之间应至少有1ms的间隔
 	PcdAntennaOn();  	//开启天线 
 
 	while(1)
@@ -39,7 +39,7 @@ int main(void)
 			case 0x44:    if(g_ucTempbuf[1] == 0x00)       { printf("Mifare_UltraLight\n"); break; }
 				      else if(g_ucTempbuf[1] == 0x03)  { printf("Mifare_DESFire\n");    break; }
 		}
-		status = PcdAnticoll(g_ucTempbuf);					//防冲撞
+		status = PcdAnticoll(g_ucTempbuf);			//防冲撞
 		if (status != MI_OK)
 		{    
 			continue;
@@ -51,12 +51,12 @@ int main(void)
 			else    printf("%X",g_ucTempbuf[i]);		
 		}
 		printf("\n");
-		status = PcdSelect(g_ucTempbuf);					//选定卡片
+		status = PcdSelect(g_ucTempbuf);			//选定卡片
 		if (status != MI_OK)
 		{
 			continue;
 		}
-		status = PcdAuthState(PICC_AUTHENT1A, 1, DefaultKey, g_ucTempbuf);		//验证卡片密码
+		status = PcdAuthState(PICC_AUTHENT1A, 1, DefaultKey, g_ucTempbuf);	//验证卡片密码
 		if (status != MI_OK)
 		{
 			continue;
@@ -66,7 +66,7 @@ int main(void)
 		{
 			continue;
 		}
-		status = PcdBakValue(1, 2);							//块备份1 --> 2
+		status = PcdBakValue(1, 2);						//块备份1 --> 2
 		if (status != MI_OK)
 		{
 			continue;
