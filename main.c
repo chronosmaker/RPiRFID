@@ -15,21 +15,21 @@ int main(void)
 	wiringPiSPISetup(channel, speed);		//设置SPI通道 0，速率 1000000
 	printf ("Raspberry Pi RFID\n") ;
 
-    unsigned char status, i, j;
+	unsigned char status, i, j;
 
 	delay(500);
-    PcdReset();			//RC522复位
-    PcdAntennaOff();	//关闭天线
+	PcdReset();			//RC522复位
+	PcdAntennaOff();	//关闭天线
 	delay(10);			//每次启动或关闭天线之间应至少有1ms的间隔
-    PcdAntennaOn();  	//开启天线 
+	PcdAntennaOn();  	//开启天线 
 
 	while(1)
 	{	
 		status = PcdRequest(PICC_REQALL, g_ucTempbuf);		//寻卡
-        if (status != MI_OK)
-        {    
+		if (status != MI_OK)
+		{    
 			continue;
-        }
+		}
 		printf("\ncard type:");
 		switch(g_ucTempbuf[0])
 		{
@@ -37,11 +37,11 @@ int main(void)
 			case 0x04:    printf("Mifare_One(S50)\n"); break;
 			case 0x08:    printf("Mifare_Pro(X)\n"); break;
 			case 0x44:    if(g_ucTempbuf[1] == 0x00)       { printf("Mifare_UltraLight\n"); break; }
-						  else if(g_ucTempbuf[1] == 0x03)  { printf("Mifare_DESFire\n");    break; }
+				      else if(g_ucTempbuf[1] == 0x03)  { printf("Mifare_DESFire\n");    break; }
 		}
 		status = PcdAnticoll(g_ucTempbuf);					//防冲撞
-        if (status != MI_OK)
-        {    
+		if (status != MI_OK)
+		{    
 			continue;
 		}
 		printf("\ncard SN:");	
@@ -51,37 +51,37 @@ int main(void)
 			else    printf("%X",g_ucTempbuf[i]);		
 		}
 		printf("\n");
-        status = PcdSelect(g_ucTempbuf);					//选定卡片
-        if (status != MI_OK)
-        {
+		status = PcdSelect(g_ucTempbuf);					//选定卡片
+		if (status != MI_OK)
+		{
 			continue;
 		}
-        status = PcdAuthState(PICC_AUTHENT1A, 1, DefaultKey, g_ucTempbuf);		//验证卡片密码
-        if (status != MI_OK)
-        {
+		status = PcdAuthState(PICC_AUTHENT1A, 1, DefaultKey, g_ucTempbuf);		//验证卡片密码
+		if (status != MI_OK)
+		{
 			continue;
 		}
-        status = PcdWrite(1, data1);						//写块1
-        if (status != MI_OK)
-        {
+		status = PcdWrite(1, data1);						//写块1
+		if (status != MI_OK)
+		{
 			continue;
 		}
-        status = PcdBakValue(1, 2);							//块备份1 --> 2
-        if (status != MI_OK)
-        {
+		status = PcdBakValue(1, 2);							//块备份1 --> 2
+		if (status != MI_OK)
+		{
 			continue;
 		}
 		for(i=0;i<4;i++)
 		{
 			status = PcdRead(i, g_ucTempbuf);				//读块
 
-		    if (status != MI_OK)
-		    {
+			if (status != MI_OK)
+			{
 				continue;
 			}
-		    printf("\nread block %d:", i);
+			printf("\nread block %d:", i);
 			int j;
-		    for(j=0;j<16;j++)
+			for(j=0;j<16;j++)
 			{
 				if(g_ucTempbuf[j] < 0x10)    printf("0%X",g_ucTempbuf[j]);
 				else    printf("%X",g_ucTempbuf[j]);	
@@ -90,6 +90,5 @@ int main(void)
 		printf("\n");
 		PcdHalt();			//卡片进入休眠状态
 		delay(1000);
-
 	}
 }
